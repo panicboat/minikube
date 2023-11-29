@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-controller-configmap
+  # TODO: for namespace-install, comment this line.
+  namespace: argo
+data:
+  namespace: default
