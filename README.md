@@ -15,6 +15,7 @@ kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-passwor
 ```
 
 The following must be modified before `kustomize build`.
+- [Artifact Repository](https://github.com/panicboat/minikube/blob/main/argo-workflows/applications/default/configmap/artifact-repositories.yaml)
 - [SLACK_WEBHOOK_URL](https://github.com/panicboat/minikube/blob/main/argo-workflows/applications/default/secret/slack-config.yaml)
 - [AWS CREDENTIAL](https://github.com/panicboat/minikube/blob/main/argo-workflows/applications/default/secret/aws-credentials.yaml)
 
