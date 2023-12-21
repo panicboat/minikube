@@ -7,7 +7,7 @@ data:
   workflowDefaults: |
     metadata:
       annotations:
-        karpenter.sh/do-not-evict: true
+        workflows.argoproj.io/notification: true
       labels:
         workflows.argoproj.io/owner: nobody
         workflows.argoproj.io/name: none
@@ -110,6 +110,7 @@ data:
                 default: good
           steps:
             - - name: slack-bot
+                when: "{{ workflow.annotations.workflows.argoproj.io/notification }} == true"
                 template: message
                 arguments:
                   parameters:
