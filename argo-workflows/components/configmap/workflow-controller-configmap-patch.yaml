@@ -9,17 +9,18 @@ data:
       annotations:
         workflows.argoproj.io/notification: true
       labels:
+        workflows.argoproj.io/creator: nobody
         workflows.argoproj.io/owner: nobody
         workflows.argoproj.io/name: none
     spec:
-      serviceAccountName: argo
-      onExit: exit-handler
       ttlStrategy:
         secondsAfterCompletion: 10
         secondsAfterSuccess: 10
         secondsAfterFailure: 10
       podGC:
         strategy: OnPodCompletion
+      serviceAccountName: argo
+      onExit: exit-handler
       metrics:
         prometheus:
           - name: exec_duration_gauge
@@ -27,9 +28,9 @@ data:
             labels:
               - key: owner
                 value: "{{ workflow.labels.workflows.argoproj.io/owner }}"
-              - key: name
-                value: "{{ workflow.labels.workflows.argoproj.io/name }}"
               - key: workflow_name
+                value: "{{ workflow.labels.workflows.argoproj.io/name }}"
+              - key: workflow_origin_name
                 value: "{{ workflow.name }}"
               - key: status
                 value: "{{ workflow.status }}"
@@ -40,15 +41,14 @@ data:
             labels:
               - key: owner
                 value: "{{ workflow.labels.workflows.argoproj.io/owner }}"
-              - key: name
-                value: "{{ workflow.labels.workflows.argoproj.io/name }}"
               - key: workflow_name
+                value: "{{ workflow.labels.workflows.argoproj.io/name }}"
+              - key: workflow_origin_name
                 value: "{{ workflow.name }}"
               - key: status
                 value: "{{ workflow.status }}"
             counter:
               value: 1
-
       templateDefaults:
         metrics:
           prometheus:
@@ -57,9 +57,9 @@ data:
               labels:
                 - key: owner
                   value: "{{ workflow.labels.workflows.argoproj.io/owner }}"
-                - key: name
-                  value: "{{ workflow.labels.workflows.argoproj.io/name }}"
                 - key: workflow_name
+                  value: "{{ workflow.labels.workflows.argoproj.io/name }}"
+                - key: workflow_origin_name
                   value: "{{ workflow.name }}"
               gauge:
                 value: "{{ workflow.duration }}"
@@ -68,15 +68,14 @@ data:
               labels:
                 - key: owner
                   value: "{{ workflow.labels.workflows.argoproj.io/owner }}"
-                - key: name
-                  value: "{{ workflow.labels.workflows.argoproj.io/name }}"
                 - key: workflow_name
+                  value: "{{ workflow.labels.workflows.argoproj.io/name }}"
+                - key: workflow_origin_name
                   value: "{{ workflow.name }}"
                 - key: status
                   value: "{{ status }}"
               counter:
                 value: 1
-
       templates:
         - name: exit-handler
           steps:
@@ -108,9 +107,9 @@ data:
           inputs:
             parameters:
               - name: color
+              - name: message
               - name: header
                 default: "Argo Workflows Notification"
-              - name: message
           steps:
           - - name: message
               when: "{{ workflow.annotations.workflows.argoproj.io/notification }} == true"
