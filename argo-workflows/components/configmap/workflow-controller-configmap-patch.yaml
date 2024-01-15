@@ -82,11 +82,11 @@ data:
           steps:
           - - name: deadmans-snitch
               when: "'{{ workflow.annotations.workflows.argoproj.io/snitch }}' != none"
-              template: curl
-              arguments:
-                parameters:
-                  - name: url
-                    value: "{{ workflow.annotations.workflows.argoproj.io/snitch }}"
+              inline:
+                container:
+                  image: public.ecr.aws/amazonlinux/amazonlinux:latest
+                  command: [curl]
+                  args: ["{{ workflow.annotations.workflows.argoproj.io/snitch }}"]
             - name: celebrate
               when: "{{ workflow.status }} == Succeeded"
               template: slack
@@ -111,14 +111,6 @@ data:
                       ```
                       {{ workflow.failures }}
                       ```
-        - name: curl
-          inputs:
-            parameters:
-              - name: url
-          container:
-            image: public.ecr.aws/amazonlinux/amazonlinux:latest
-            command: [curl]
-            args: ["{{ inputs.parameters.url }}"]
         - name: slack
           inputs:
             parameters:
