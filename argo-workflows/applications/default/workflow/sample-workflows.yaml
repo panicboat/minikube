@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: sample-workflow-template
+spec:
+  entrypoint: main
+  arguments:
+    parameters:
+      - name: message
+        value: this message is default.
+  templates:
+    - name: main
+      steps:
+        - - name: workflow1
+            template: whalesay
+    - name: whalesay
+      inputs:
+        parameters:
+          - name: message
+            value: "{{workflow.parameters.message}}"
+      container:
+        name: whalesay
+        image: docker/whalesay
+        command: [cowsay]
+        args: ["{{inputs.parameters.message}}"]
+        env:
+          - name: VAR1
+            value: var1
+---
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: sample-cron-workflow
+spec:
+  suspend: true
+  schedule: "* * * * *"
+  timezone: Asia/Tokyo
+  workflowSpec:
+    entrypoint: main
+    arguments:
+      parameters:
+        - name: message
+          value: this message from cronworkflow.
+    templates:
+      - name: main
+        steps:
+          - - name: step1
+              templateRef:
+                name: workflow-template-submittable
+                template: whalesay
+---
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: stop-cron-workflow
+spec:
+  suspend: true
+  schedule: "* * * * *"
+  timezone: Asia/Tokyo
+  workflowSpec:
+    entrypoint: main
+    templates:
+      - name: main
+        container:
+          image: bitnami/argo-workflow-cli:3
+          args: ["cron", "list"]
