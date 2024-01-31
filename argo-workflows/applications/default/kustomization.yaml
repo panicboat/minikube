@@ -9,3 +9,4 @@ resources:
   - secret/slack-config.yaml
   - serviceaccount/argo-server.yaml
   - serviceaccount/argo.yaml
+  # - workflow/workflow-template-submittable.yaml
