@@ -11,7 +11,7 @@ spec:
   templates:
     - name: main
       steps:
-        - - name: workflow1
+        - - name: step1
             template: whalesay
     - name: whalesay
       inputs:
@@ -23,9 +23,6 @@ spec:
         image: docker/whalesay
         command: [cowsay]
         args: ["{{inputs.parameters.message}}"]
-        env:
-          - name: VAR1
-            value: var1
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: CronWorkflow
@@ -46,21 +43,63 @@ spec:
         steps:
           - - name: step1
               templateRef:
-                name: workflow-template-submittable
+                name: sample-workflow-template
                 template: whalesay
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: cronworkflow-staus-manager
+spec:
+  entrypoint: main
+  arguments:
+    parameters:
+      - name: status
+        value: suspend
+        enum:
+          - suspend
+          - resume
+      - name: cronworkflow
+  templates:
+    - name: main
+      inputs:
+        parameters:
+          - name: status
+            value: "{{workflow.parameters.status}}"
+          - name: cronworkflow
+            value: "{{workflow.parameters.cronworkflow}}"
+      container:
+        name: main
+        image: public.ecr.aws/bitnami/argo-workflow-cli:latest
+        args:
+          [
+            "cron",
+            "{{inputs.parameters.status}}",
+            "{{inputs.parameters.cronworkflow}}",
+            "-n",
+            "default",
+          ]
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: CronWorkflow
 metadata:
-  name: stop-cron-workflow
+  name: suspended-cronworkflow
 spec:
   suspend: true
-  schedule: "* * * * *"
+  schedule: "*/5 * * * *"
   timezone: Asia/Tokyo
   workflowSpec:
     entrypoint: main
     templates:
       - name: main
-        container:
-          image: bitnami/argo-workflow-cli:3
-          args: ["cron", "list"]
+        steps:
+          - - name: suspended-cronworkflow
+              templateRef:
+                name: cronworkflow-staus-manager
+                template: main
+              arguments:
+                parameters:
+                  - name: status
+                    value: suspend
+                  - name: cronworkflow
+                    value: sample-cron-workflow
