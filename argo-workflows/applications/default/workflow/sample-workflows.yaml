@@ -49,7 +49,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: cronworkflow-staus-manager
+  name: cronworkflow-status-manager
 spec:
   entrypoint: main
   arguments:
