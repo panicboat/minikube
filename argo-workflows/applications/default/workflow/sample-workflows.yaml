@@ -95,7 +95,7 @@ spec:
         steps:
           - - name: suspended-cronworkflow
               templateRef:
-                name: cronworkflow-staus-manager
+                name: cronworkflow-status-manager
                 template: main
               arguments:
                 parameters:
