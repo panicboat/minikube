@@ -14,12 +14,12 @@ data:
         workflows.argoproj.io/owner: nobody
         workflows.argoproj.io/name: none
     spec:
-      ttlStrategy:
-        secondsAfterCompletion: 10
-        secondsAfterSuccess: 10
-        secondsAfterFailure: 10
-      podGC:
-        strategy: OnPodCompletion
+      # ttlStrategy:
+      #   secondsAfterCompletion: 10
+      #   secondsAfterSuccess: 10
+      #   secondsAfterFailure: 10
+      # podGC:
+      #   strategy: OnPodCompletion
       serviceAccountName: argo
       onExit: exit-handler
       metrics:
@@ -80,14 +80,62 @@ data:
       templates:
         - name: exit-handler
           steps:
-          - - name: deadmans-snitch
+          - - name: datadog-metrics
+              template: metrics
+            - name: deadmans-snitch
               when: "'{{ workflow.annotations.workflows.argoproj.io/snitch }}' != none"
               inline:
                 container:
                   image: public.ecr.aws/amazonlinux/amazonlinux:latest
                   command: [curl]
                   args: ["{{ workflow.annotations.workflows.argoproj.io/snitch }}"]
-            - name: celebrate
+            - name: slack-notification
+              when: "{{ workflow.annotations.workflows.argoproj.io/notification }} == true"
+              template: notification
+        - name: metrics
+          steps:
+          - - name: exit_status_count
+              template: datadog
+              arguments:
+                parameters:
+                  - name: metric
+                    value: "argo.argo_workflows_exit_status_count"
+                  - name: type
+                    value: 1
+                  - name: value
+                    value: 1
+            - name: exit_duration_gauge
+              template: datadog
+              arguments:
+                parameters:
+                  - name: metric
+                    value: "argo.argo_workflows_exit_duration_gauge"
+                  - name: type
+                    value: 3
+                  - name: value
+                    value: "{{ workflow.duration }}"
+        - name: datadog
+          inputs:
+            parameters:
+              - name: metric
+              - name: type
+              - name: value
+          container:
+            image: public.ecr.aws/amazonlinux/amazonlinux:latest
+            command: [bash, -c]
+            args:
+              - >-
+                curl -X POST https://api.datadoghq.com/api/v2/series
+                -H "Accept: application/json"
+                -H "Content-Type: application/json"
+                -H "DD-API-KEY: ${DD_API_KEY}"
+                -d "{\"series\": [{\"metric\": \"{{ inputs.parameters.metric }}\",\"type\": {{ inputs.parameters.type }},\"points\": [{\"timestamp\": $(date +%s),\"value\": "{{ inputs.parameters.value }}"}],\"tags\": [\"owner:{{ workflow.labels.workflows.argoproj.io/owner }}\",\"workflow_name:{{ workflow.labels.workflows.argoproj.io/name }}\",\"workflow_origin_name:{{ workflow.name }}\",\"status:{{ workflow.status }}\"]}]}"
+            envFrom:
+              - secretRef:
+                  name: dd-credentials
+        - name: notification
+          steps:
+          - - name: celebrate
               when: "{{ workflow.status }} == Succeeded"
               template: slack
               arguments:
@@ -118,41 +166,37 @@ data:
               - name: message
               - name: header
                 default: "Argo Workflows Notification"
-          steps:
-          - - name: message
-              when: "{{ workflow.annotations.workflows.argoproj.io/notification }} == true"
-              inline:
-                container:
-                  image: ghcr.io/nagomiso/slackutils:v0.2.1
-                  envFrom:
-                  - secretRef:
-                      name: slack-config
-                  args:
-                    - webhook-send
-                    - --color
-                    - "{{ inputs.parameters.color }}"
-                    - --header
-                    - "{{ inputs.parameters.header }}"
-                    - --message
-                    - "{{ inputs.parameters.message }}"
-                    # https://argoproj.github.io/argo-workflows/variables/#global
-                    - --field
-                    - |
-                      *workflow:*
-                      <https://localhost:2746/workflows/{{ workflow.namespace }}/{{ workflow.name }}?tab=workflow&uid={{ workflow.uid }}|{{ workflow.name }}>
-                    - --field
-                    - |
-                      *owner:*
-                      {{ workflow.labels.workflows.argoproj.io/owner }}
-                    - --field
-                    - |
-                      *creator:*
-                      {{ workflow.labels.workflows.argoproj.io/creator }}
-                    - --field
-                    - |
-                      *creationTimestamp:*
-                      {{ workflow.creationTimestamp }}
-                    - --field
-                    - |
-                      *duration:*
-                      {{ workflow.duration }}s
+          container:
+            image: ghcr.io/nagomiso/slackutils:v0.2.1
+            envFrom:
+            - secretRef:
+                name: slack-config
+            args:
+              - webhook-send
+              - --color
+              - "{{ inputs.parameters.color }}"
+              - --header
+              - "{{ inputs.parameters.header }}"
+              - --message
+              - "{{ inputs.parameters.message }}"
+              # https://argoproj.github.io/argo-workflows/variables/#global
+              - --field
+              - |
+                *workflow:*
+                <https://localhost:2746/workflows/{{ workflow.namespace }}/{{ workflow.name }}?tab=workflow&uid={{ workflow.uid }}|{{ workflow.name }}>
+              - --field
+              - |
+                *owner:*
+                {{ workflow.labels.workflows.argoproj.io/owner }}
+              - --field
+              - |
+                *creator:*
+                {{ workflow.labels.workflows.argoproj.io/creator }}
+              - --field
+              - |
+                *creationTimestamp:*
+                {{ workflow.creationTimestamp }}
+              - --field
+              - |
+                *duration:*
+                {{ workflow.duration }}s
