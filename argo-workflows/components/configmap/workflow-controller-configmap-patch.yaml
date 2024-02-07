@@ -98,7 +98,7 @@ data:
               template: datadog
               arguments:
                 parameters:
-                  - name: metric
+                  - name: name
                     value: "argo.argo_workflows_exit_status_count"
                   - name: type
                     value: 1
@@ -108,7 +108,7 @@ data:
               template: datadog
               arguments:
                 parameters:
-                  - name: metric
+                  - name: name
                     value: "argo.argo_workflows_exit_duration_gauge"
                   - name: type
                     value: 3
@@ -117,7 +117,7 @@ data:
         - name: datadog
           inputs:
             parameters:
-              - name: metric
+              - name: name
               - name: type
               - name: value
           container:
@@ -129,7 +129,7 @@ data:
                 -H "Accept: application/json"
                 -H "Content-Type: application/json"
                 -H "DD-API-KEY: ${DD_API_KEY}"
-                -d "{\"series\": [{\"metric\": \"{{ inputs.parameters.metric }}\",\"type\": {{ inputs.parameters.type }},\"points\": [{\"timestamp\": $(date +%s),\"value\": "{{ inputs.parameters.value }}"}],\"tags\": [\"owner:{{ workflow.labels.workflows.argoproj.io/owner }}\",\"workflow_name:{{ workflow.labels.workflows.argoproj.io/name }}\",\"workflow_origin_name:{{ workflow.name }}\",\"status:{{ workflow.status }}\"]}]}"
+                -d "{\"series\": [{\"metric\": \"{{ inputs.parameters.name }}\",\"type\": {{ inputs.parameters.type }},\"points\": [{\"timestamp\": $(date +%s),\"value\": "{{ inputs.parameters.value }}"}],\"tags\": [\"owner:{{ workflow.labels.workflows.argoproj.io/owner }}\",\"workflow_name:{{ workflow.labels.workflows.argoproj.io/name }}\",\"workflow_origin_name:{{ workflow.name }}\",\"status:{{ workflow.status }}\"]}]}"
             envFrom:
               - secretRef:
                   name: dd-credentials
