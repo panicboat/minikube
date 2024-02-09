@@ -94,7 +94,7 @@ data:
               template: notification
         - name: metrics
           steps:
-          - - name: exit_status_count
+          - - name: exit-status-count
               template: datadog
               arguments:
                 parameters:
@@ -104,7 +104,7 @@ data:
                     value: 1
                   - name: value
                     value: 1
-            - name: exit_duration_gauge
+            - name: exit-duration-gauge
               template: datadog
               arguments:
                 parameters:
