@@ -135,17 +135,7 @@ data:
                   name: dd-credentials
         - name: notification
           steps:
-          - - name: celebrate
-              when: "{{ workflow.status }} == Succeeded"
-              template: slack
-              arguments:
-                parameters:
-                  - name: color
-                    value: good
-                  - name: message
-                    value: |
-                      `{{ workflow.name }}` is `{{ workflow.status }}`
-            - name: cry
+          - - name: cry
               when: "{{workflow.status}} != Succeeded"
               template: slack
               arguments:
