@@ -8,6 +8,7 @@ data:
     metadata:
       annotations:
         workflows.argoproj.io/notification: true
+        workflows.argoproj.io/snitch: none
         workflows.argoproj.io/snitch-token: none
       labels:
         workflows.argoproj.io/creator: nobody
@@ -83,12 +84,7 @@ data:
           - - name: datadog-metrics
               template: metrics
             - name: deadmans-snitch
-              when: "'{{ workflow.annotations.workflows.argoproj.io/snitch-token }}' != none"
-              inline:
-                container:
-                  image: public.ecr.aws/amazonlinux/amazonlinux:latest
-                  command: [curl]
-                  args: ["https://nosnch.in/{{ workflow.annotations.workflows.argoproj.io/snitch-token }}"]
+              template: snitch
             - name: slack-notification
               when: "{{ workflow.annotations.workflows.argoproj.io/notification }} == true"
               template: notification
@@ -133,6 +129,22 @@ data:
             envFrom:
               - secretRef:
                   name: dd-credentials
+        - name: snitch
+          steps:
+          - - name: snitch-with-token
+              when: "'{{ workflow.annotations.workflows.argoproj.io/snitch-token }}' != none"
+              inline:
+                container:
+                  image: public.ecr.aws/amazonlinux/amazonlinux:latest
+                  command: [curl]
+                  args: ["https://nosnch.in/{{ workflow.annotations.workflows.argoproj.io/snitch-token }}"]
+            - name: snitch-with-url
+              when: "'{{ workflow.annotations.workflows.argoproj.io/snitch }}' != none"
+              inline:
+                container:
+                  image: public.ecr.aws/amazonlinux/amazonlinux:latest
+                  command: [curl]
+                  args: ["{{ workflow.annotations.workflows.argoproj.io/snitch }}"]
         - name: notification
           steps:
           - - name: cry
