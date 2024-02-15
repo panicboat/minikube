@@ -45,6 +45,10 @@ spec:
               templateRef:
                 name: sample-workflow-template
                 template: whalesay
+              arguments:
+                parameters:
+                  - name: message
+                    value: "this messege from cronworkflow."
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
