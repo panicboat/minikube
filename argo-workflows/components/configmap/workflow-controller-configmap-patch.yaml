@@ -8,7 +8,7 @@ data:
     metadata:
       annotations:
         workflows.argoproj.io/notification: true
-        workflows.argoproj.io/snitch: none
+        workflows.argoproj.io/snitch-token: none
       labels:
         workflows.argoproj.io/creator: nobody
         workflows.argoproj.io/owner: nobody
@@ -83,12 +83,12 @@ data:
           - - name: datadog-metrics
               template: metrics
             - name: deadmans-snitch
-              when: "'{{ workflow.annotations.workflows.argoproj.io/snitch }}' != none"
+              when: "'{{ workflow.annotations.workflows.argoproj.io/snitch-token }}' != none"
               inline:
                 container:
                   image: public.ecr.aws/amazonlinux/amazonlinux:latest
                   command: [curl]
-                  args: ["{{ workflow.annotations.workflows.argoproj.io/snitch }}"]
+                  args: ["https://nosnch.in/{{ workflow.annotations.workflows.argoproj.io/snitch-token }}"]
             - name: slack-notification
               when: "{{ workflow.annotations.workflows.argoproj.io/notification }} == true"
               template: notification
