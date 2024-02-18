@@ -4,6 +4,7 @@ namespace: argo
 resources:
   - namespace/argo.yaml
   - https://github.com/argoproj/argo-workflows/releases/download/v3.5.0/install.yaml
+  - secret/argo-postgres-secret.yaml
 patches:
   - path: configmap/workflow-controller-configmap-patch.yaml
   - path: deployment/argo-server-patch.yaml

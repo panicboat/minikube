@@ -4,6 +4,20 @@ metadata:
   name: workflow-controller-configmap
   namespace: argo
 data:
+  persistence: |
+    archive: true
+    postgresql:
+      host: postgres.default.svc.cluster.local
+      port: 5432
+      database: postgres
+      tableName: workflows
+      userNameSecret:
+        name: argo-postgres-secret
+        key: POSTGRES_USER
+      passwordSecret:
+        name: argo-postgres-secret
+        key: POSTGRES_PASSWORD
+
   workflowDefaults: |
     metadata:
       annotations:
@@ -15,14 +29,14 @@ data:
         workflows.argoproj.io/owner: nobody
         workflows.argoproj.io/name: none
     spec:
-      # ttlStrategy:
-      #   secondsAfterCompletion: 10
-      #   secondsAfterSuccess: 10
-      #   secondsAfterFailure: 10
-      # podGC:
-      #   strategy: OnPodCompletion
+      ttlStrategy:
+        secondsAfterCompletion: 10
+        secondsAfterSuccess: 10
+        secondsAfterFailure: 10
+      podGC:
+        strategy: OnPodCompletion
       serviceAccountName: argo
-      onExit: exit-handler
+      # onExit: exit-handler
       metrics:
         prometheus:
           - name: exec_duration_gauge
