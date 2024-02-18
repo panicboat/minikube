@@ -36,7 +36,7 @@ data:
       podGC:
         strategy: OnPodCompletion
       serviceAccountName: argo
-      # onExit: exit-handler
+      onExit: exit-handler
       metrics:
         prometheus:
           - name: exec_duration_gauge
@@ -96,6 +96,7 @@ data:
         - name: exit-handler
           steps:
           - - name: datadog-metrics
+              when: "{{ workflow.labels.workflows.argoproj.io/owner }} != nobody"
               template: metrics
             - name: deadmans-snitch
               template: snitch
