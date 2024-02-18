@@ -21,7 +21,7 @@ data:
   workflowDefaults: |
     metadata:
       annotations:
-        workflows.argoproj.io/notification: true
+        workflows.argoproj.io/notification: false
         workflows.argoproj.io/snitch: none
         workflows.argoproj.io/snitch-token: none
       labels:
@@ -96,7 +96,6 @@ data:
         - name: exit-handler
           steps:
           - - name: datadog-metrics
-              when: "1 != 0"
               template: metrics
             - name: deadmans-snitch
               template: snitch
