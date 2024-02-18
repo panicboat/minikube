@@ -96,7 +96,7 @@ data:
         - name: exit-handler
           steps:
           - - name: datadog-metrics
-              when: "{{ workflow.labels.workflows.argoproj.io/owner }} != nobody"
+              when: "1 != 0"
               template: metrics
             - name: deadmans-snitch
               template: snitch
