@@ -66,6 +66,13 @@ data:
             counter:
               value: 1
       templateDefaults:
+        retryStrategy:
+          limit: "10"
+          backoff:
+            duration: "1"
+            factor: "2"
+            maxDuration: "1m"
+          retryPolicy: OnTransientError
         metrics:
           prometheus:
             - name: template_duration_gauge
