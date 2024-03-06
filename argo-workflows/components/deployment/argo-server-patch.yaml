@@ -1,3 +1,13 @@
-- op: replace
-  path: /spec/template/spec/containers/0/args
-  value: ["server", "--auth-mode=server"]
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argo-server
+  namespace: argo
+spec:
+  template:
+    spec:
+      containers:
+      - name: argo-server
+        args:
+        - server
+        - --auth-mode=server

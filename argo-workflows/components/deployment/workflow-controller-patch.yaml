@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: argo
+spec:
+  template:
+    spec:
+      containers:
+      - name: workflow-controller
+        env:
+        - name: TRANSIENT_ERROR_PATTERN
+          value: ''

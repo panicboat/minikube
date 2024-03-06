@@ -9,9 +9,5 @@ resources:
   - pdb/argo-server.yaml
 patches:
   - path: configmap/workflow-controller-configmap-patch.yaml
+  - path: deployment/workflow-controller-patch.yaml
   - path: deployment/argo-server-patch.yaml
-    target:
-      group: apps
-      kind: Deployment
-      name: argo-server
-      version: v1
