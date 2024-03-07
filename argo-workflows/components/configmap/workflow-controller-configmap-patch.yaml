@@ -29,6 +29,8 @@ data:
         workflows.argoproj.io/owner: nobody
         workflows.argoproj.io/name: none
     spec:
+      podDisruptionBudget:
+        minAvailable: 9999
       ttlStrategy:
         secondsAfterCompletion: 10
         secondsAfterSuccess: 10
