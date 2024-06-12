@@ -3,18 +3,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 namespace: default
 resources:
   - configmap/artifact-repositories.yaml
-  - role/executer.yaml
-  - rolebinding/argo.yaml
-  - rolebinding/argo-server.yaml
-  - rolebinding/executer.yaml
+  - role/argo-role.yaml
+  - role/argo-server-role.yaml
+  - role/executor-role.yaml
+  - rolebinding/argo-role-binding.yaml
+  - rolebinding/argo-server-role-binding.yaml
+  - rolebinding/executor-role-binding.yaml
   - secret/aws-credentials.yaml
-  - serviceaccount/argo-server.yaml
-  - serviceaccount/argo.yaml
-  - serviceaccount/executer.yaml
-  - https://raw.githubusercontent.com/argoproj/argo-workflows/v3.5.4/manifests/namespace-install/argo-server-rbac/argo-server-role.yaml
-  - https://raw.githubusercontent.com/argoproj/argo-workflows/v3.5.4/manifests/namespace-install/workflow-controller-rbac/workflow-controller-role.yaml
-  # - workflow/workflow-on-exit-another-workflow.yaml
-  # - workflow/workflow-submit-another-workflow.yaml
-  # - workflow/workflow-artifact-output.yaml
-components:
-  - workflow/accesstoken
+  - serviceaccount/executor.yaml

@@ -2,16 +2,22 @@ kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 namespace: argo
 resources:
-  - https://github.com/argoproj/argo-workflows/releases/download/v3.5.7/quick-start-minimal.yaml
+  # TODO: for namespace-install, comment this line.
+  # - https://github.com/argoproj/argo-workflows/releases/download/v3.5.8/install.yaml
+  # TODO: for namespace-install, comment out this line.
+  - https://github.com/argoproj/argo-workflows/releases/download/v3.5.8/namespace-install.yaml
   - namespace/argo.yaml
   - pdb/workflow-controller.yaml
   - pdb/argo-server.yaml
   - secret/argo-postgres-secret.yaml
 patches:
-  - path: configmap/workflow-controller-configmap.yaml
+  # TODO: for namespace-install, comment out this line.
+  - path: deployment/argo-server.yaml
+  - path: deployment/workflow-controller.yaml
 configMapGenerator:
   - name: workflow-controller-configmap
-    namespace: argo
+    # TODO: for namespace-install, comment this line.
+    # namespace: argo
     behavior: merge
     files:
       - persistence=configmap/persistence.yaml

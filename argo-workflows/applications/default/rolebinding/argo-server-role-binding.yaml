@@ -1,24 +1,25 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: argo-binding-default
+  name: argo-server-role-binding-default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: argo-role
+  name: argo-server-role
 subjects:
   - kind: ServiceAccount
-    name: argo
+    name: argo-server
+    namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: argo-binding-argo
+  name: argo-server-role-binding-argo
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: argo-role
+  name: argo-server-role
 subjects:
   - kind: ServiceAccount
-    name: argo
+    name: argo-server
     namespace: argo

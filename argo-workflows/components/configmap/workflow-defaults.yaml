@@ -20,7 +20,7 @@ spec:
     strategy: OnPodCompletion
   artifactGC:
     strategy: Never
-  serviceAccountName: argo
+  serviceAccountName: executor
   metrics:
     prometheus:
       - name: exec_duration_gauge
