@@ -6,8 +6,8 @@ resources:
   - role/argo-role.yaml
   - role/argo-server-role.yaml
   - role/executor-role.yaml
-  - rolebinding/argo-role-binding.yaml
-  - rolebinding/argo-server-role-binding.yaml
-  - rolebinding/executor-role-binding.yaml
+  - rolebinding/argo-binding.yaml
+  - rolebinding/argo-server-binding.yaml
+  - rolebinding/executor-binding.yaml
   - secret/aws-credentials.yaml
   - serviceaccount/executor.yaml

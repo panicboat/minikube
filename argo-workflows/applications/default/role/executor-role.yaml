@@ -128,3 +128,12 @@ rules:
       - create
       - get
       - delete
+  # leases
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+      - get
+      - update
