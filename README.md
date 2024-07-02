@@ -15,8 +15,8 @@ kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-passwor
 ```
 
 The following must be modified before `kustomize build`.
-- [Artifact Repository](https://github.com/panicboat/minikube/blob/main/argo-workflows/applications/default/configmap/artifact-repositories.yaml)
-- [AWS CREDENTIAL](https://github.com/panicboat/minikube/blob/main/argo-workflows/applications/default/secret/aws-credentials.yaml)
+- [Artifact Repository](argo-workflows/applications/default/configmap/artifact-repositories.yaml)
+- [AWS CREDENTIAL](argo-workflows/applications/default/secret/aws-credentials.yaml)
 
 ```sh
 kustomize build . | kubectl apply -f -
@@ -53,5 +53,7 @@ kubectl port-forward $(kubectl get pod -l eventsource-name=webhook -o name) 1200
 
 ```sh
 kubectl -n argo port-forward deploy/workflow-controller 9090:9090
+kubectl -n argo-events port-forward deploy/controller-manager 7777:7777
 ```
-https://127.0.0.1:9090/metrics
+http://127.0.0.1:9090/metrics
+http://127.0.0.1:7777/metrics
