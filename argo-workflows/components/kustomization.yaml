@@ -20,5 +20,8 @@ configMapGenerator:
     # namespace: argo
     behavior: merge
     files:
+      - columns=configmap/columns.yaml
+      - links=configmap/links.yaml
+      - navColor=configmap/nav-color.yaml
       - persistence=configmap/persistence.yaml
       - workflowDefaults=configmap/workflow-defaults.yaml
