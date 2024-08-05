@@ -13,9 +13,8 @@ spec:
   podDisruptionBudget:
     minAvailable: 9999
   ttlStrategy:
-    secondsAfterCompletion: 10
-    secondsAfterSuccess: 10
-    secondsAfterFailure: 10
+    secondsAfterCompletion: 30
+  archiveLogs: true
   podGC:
     strategy: OnPodCompletion
   artifactGC:
@@ -75,7 +74,6 @@ spec:
       backoff:
         duration: "1"
         factor: "2"
-        maxDuration: "10m"
       retryPolicy: OnTransientError
     metrics:
       prometheus:

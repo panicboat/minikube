@@ -6,7 +6,6 @@ metadata:
     workflows.argoproj.io/default-artifact-repository: default-s3-artifact-repository
 data:
   default-s3-artifact-repository: |
-    archiveLogs: true
     s3:
       endpoint: s3.amazonaws.com
       bucket: panicboat-sandbox-723535945756
