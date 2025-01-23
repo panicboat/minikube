@@ -12,3 +12,6 @@ spec:
         - --namespaced
         - --managed-namespace
         - default
+        env:
+        - name: TRANSIENT_ERROR_PATTERN
+          value: "(OCI runtime create failed)"
