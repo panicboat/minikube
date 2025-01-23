@@ -3,9 +3,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 namespace: argo
 resources:
   # TODO: for namespace-install, comment this line.
-  # - https://github.com/argoproj/argo-workflows/releases/download/v3.5.8/install.yaml
+  # - https://github.com/argoproj/argo-workflows/releases/download/v3.6.2/install.yaml
   # TODO: for namespace-install, comment out this line.
-  - https://github.com/argoproj/argo-workflows/releases/download/v3.5.8/namespace-install.yaml
+  - https://github.com/argoproj/argo-workflows/releases/download/v3.6.2/namespace-install.yaml
   - namespace/argo.yaml
   - pdb/workflow-controller.yaml
   - pdb/argo-server.yaml
