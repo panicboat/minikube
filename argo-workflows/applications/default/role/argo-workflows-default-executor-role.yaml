@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: executor-role
+  name: argo-workflows-default-executor-role
 rules:
   # argo workflows
   - apiGroups:
@@ -51,17 +51,20 @@ rules:
     verbs:
       - list
       - watch
+      - create
+      - patch
       - deletecollection
   # argo events
   - apiGroups:
-    - argoproj.io
+      - argoproj.io
     resources:
-    - eventsources
-    - sensors
+      - eventsources
+      - sensors
     verbs:
-    - create
-    - get
-    - delete
+      - create
+      - get
+      - delete
+      - list
   # pods
   - apiGroups:
       - ""
